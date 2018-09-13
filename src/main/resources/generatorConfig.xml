@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="mysql" targetRuntime="MyBatis3">
+        <property name="basePackageName" value="org.shtl"/>
+
+        <!-- 插件 -->
+        <plugin type="org.shtl.mybatis.generator.plugin.MySqlLimitPlugin"/>
+        <plugin type="org.shtl.mybatis.generator.plugin.LombokPlugin"/>
+        <plugin type="org.shtl.mybatis.generator.plugin.UnmergeableXmlMappersPlugin"/>
+
+        <!-- 注释生成器 -->
+        <commentGenerator type="org.shtl.mybatis.generator.MyCommentGenerator">
+            <property name="author" value="shtl"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- jdbc 连接 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/test" userId="root" password="123456">
+            <property name="remarks" value="true"/>
+            <property name="useInformationSchema" value="true"/>
+        </jdbcConnection>
+
+        <!-- java 类型解析 -->
+        <javaTypeResolver type="org.shtl.mybatis.generator.MyJavaTypeResolver">
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- java model 生成器 -->
+        <javaModelGenerator targetPackage="dal.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- sql map 生成器 -->
+        <sqlMapGenerator targetPackage="dal.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- dao 生成器 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="dal.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- table -->
+        <table tableName="%"/>
+    </context>
+</generatorConfiguration>
