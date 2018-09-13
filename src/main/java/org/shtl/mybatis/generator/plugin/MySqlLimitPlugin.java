@@ -28,6 +28,7 @@ public class MySqlLimitPlugin extends PluginAdapter {
     @Override
     public boolean modelExampleClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         PrimitiveTypeWrapper integerWrapper = FullyQualifiedJavaType.getIntInstance().getPrimitiveTypeWrapper();
+        PrimitiveTypeWrapper longWrapper = PrimitiveTypeWrapper.getLongInstance();
 
         Field limit = new Field();
         limit.setName("limit");
@@ -52,19 +53,19 @@ public class MySqlLimitPlugin extends PluginAdapter {
         Field offset = new Field();
         offset.setName("offset");
         offset.setVisibility(JavaVisibility.PRIVATE);
-        offset.setType(integerWrapper);
+        offset.setType(longWrapper);
         topLevelClass.addField(offset);
 
         Method setOffset = new Method();
         setOffset.setVisibility(JavaVisibility.PUBLIC);
         setOffset.setName("setOffset");
-        setOffset.addParameter(new Parameter(integerWrapper, "offset"));
+        setOffset.addParameter(new Parameter(longWrapper, "offset"));
         setOffset.addBodyLine("this.offset = offset;");
         topLevelClass.addMethod(setOffset);
 
         Method getOffset = new Method();
         getOffset.setVisibility(JavaVisibility.PUBLIC);
-        getOffset.setReturnType(integerWrapper);
+        getOffset.setReturnType(longWrapper);
         getOffset.setName("getOffset");
         getOffset.addBodyLine("return offset;");
         topLevelClass.addMethod(getOffset);
@@ -76,6 +77,23 @@ public class MySqlLimitPlugin extends PluginAdapter {
      */
     @Override
     public boolean sqlMapSelectByExampleWithoutBLOBsElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+        addLimitAndOffset(element, introspectedTable);
+        return true;
+    }
+
+    @Override
+    public boolean sqlMapSelectByExampleWithBLOBsElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
+        addLimitAndOffset(element, introspectedTable);
+        return true;
+    }
+
+    /**
+     * 添加分页
+     *
+     * @param element           XmlElement
+     * @param introspectedTable IntrospectedTable
+     */
+    private void addLimitAndOffset(XmlElement element, IntrospectedTable introspectedTable) {
         XmlElement ifLimitNotNullElement = new XmlElement("if");
         ifLimitNotNullElement.addAttribute(new Attribute("test", "limit != null"));
 
@@ -90,6 +108,5 @@ public class MySqlLimitPlugin extends PluginAdapter {
         ifLimitNotNullElement.addElement(ifOffsetNullElement);
 
         element.addElement(ifLimitNotNullElement);
-        return true;
     }
 }
