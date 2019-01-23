@@ -19,19 +19,27 @@ import java.util.Properties;
 public class MyCommentGenerator extends DefaultCommentGenerator {
 
     private static final String AUTHOR = "author";
+    private static final String TYPE = "type";
 
     /** properties */
     private Properties properties = new Properties();
     /** author */
     private String author = "";
+    /** type swagger, unSwagger*/
+    private String type = "";
 
     @Override
     public void addConfigurationProperties(Properties properties) {
         this.properties.putAll(properties);
+
+        //作者
         this.author = this.properties.getProperty(AUTHOR);
         if (null == author || "".equals(author)) {
             author = System.getProperty("user.name");
         }
+
+        //类型
+        this.type = this.properties.getProperty(TYPE);
         super.addConfigurationProperties(properties);
     }
 
@@ -40,7 +48,10 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
         field.addJavaDocLine("/** " + introspectedColumn.getRemarks() + " */");
 
         //swagger类
-        field.addJavaDocLine(" @ApiModelProperty(value = \"" + introspectedColumn.getRemarks() + "\" name = \"" + field.getName() + "\")");
+        if ("swagger".equals(type)) {
+            field.addJavaDocLine(" @ApiModelProperty(value = \"" + introspectedColumn.getRemarks() + "\", name = \"" + field.getName() + "\")");
+        }
+
     }
 
     @Override
@@ -54,12 +65,13 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
         topLevelClass.addJavaDocLine(" */");
 
         //swagger类
-        FullyQualifiedJavaType modelType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModel");
-        topLevelClass.addImportedType(modelType);
-        FullyQualifiedJavaType propertyType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModelProperty;");
-        topLevelClass.addImportedType(propertyType);
-        topLevelClass.addJavaDocLine("@ApiModel(description= \"" + introspectedTable.getRemarks() + "\")");
-
+        if ("swagger".equals(type)) {
+            FullyQualifiedJavaType modelType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModel");
+            topLevelClass.addImportedType(modelType);
+            FullyQualifiedJavaType propertyType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModelProperty;");
+            topLevelClass.addImportedType(propertyType);
+            topLevelClass.addJavaDocLine("@ApiModel(description= \"" + introspectedTable.getRemarks() + "\")");
+        }
     }
 
     @Override
