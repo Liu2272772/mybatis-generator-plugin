@@ -45,11 +45,14 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
 
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        field.addJavaDocLine("/** " + introspectedColumn.getRemarks() + " */");
+        //非Swagger
+        if (!"swagger".equals(type)) {
+            field.addJavaDocLine("/** " + introspectedColumn.getRemarks() + " */");
+        }
 
         //swagger类
         if ("swagger".equals(type)) {
-            field.addJavaDocLine(" @ApiModelProperty(value = \"" + introspectedColumn.getRemarks() + "\", name = \"" + field.getName() + "\")");
+            field.addJavaDocLine(" @ApiModelProperty(value = \"" + introspectedColumn.getRemarks() + "\")");
         }
 
     }
