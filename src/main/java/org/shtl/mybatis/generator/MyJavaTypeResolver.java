@@ -9,7 +9,7 @@ import java.sql.Types;
 /**
  * mybatis generator 自定义JavaTypeResolver
  *
- * @author cuiyang
+ * @author ZhaoLong Liu
  */
 public class MyJavaTypeResolver extends JavaTypeResolverDefaultImpl {
 

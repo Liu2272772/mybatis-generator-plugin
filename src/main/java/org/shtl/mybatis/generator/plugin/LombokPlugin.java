@@ -13,7 +13,7 @@ import java.util.List;
  * A MyBatis Generator plugin to use Lombok's annotations.
  * For example, use @Data annotation instead of getter ands setter.
  *
- * @author Paolo Predonzani (http://softwareloop.com/)
+ * @author ZhaoLong Liu
  */
 public class LombokPlugin extends PluginAdapter {
 

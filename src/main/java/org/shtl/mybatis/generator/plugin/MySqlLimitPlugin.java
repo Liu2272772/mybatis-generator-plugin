@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * MySQL分页插件
  *
- * @author cuiyang
+ * @author ZhaoLong Liu
  * @since 2018/5/13
  */
 public class MySqlLimitPlugin extends PluginAdapter {

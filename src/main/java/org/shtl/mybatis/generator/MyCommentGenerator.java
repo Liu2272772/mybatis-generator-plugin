@@ -14,7 +14,7 @@ import java.util.Properties;
 /**
  * mybatis generator 自定义CommentGenerator
  *
- * @author cuiyang
+ * @author ZhaoLong Liu
  */
 public class MyCommentGenerator extends DefaultCommentGenerator {
 
