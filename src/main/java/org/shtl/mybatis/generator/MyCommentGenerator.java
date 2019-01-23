@@ -47,6 +47,7 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
         topLevelClass.addJavaDocLine(" *");
         topLevelClass.addJavaDocLine(" * @author " + author);
         topLevelClass.addJavaDocLine(" */");
+        topLevelClass.addJavaDocLine("@ApiModel(description= \"" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName() + "\")");
     }
 
     @Override
