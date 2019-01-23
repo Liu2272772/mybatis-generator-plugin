@@ -3,10 +3,12 @@ package org.shtl.mybatis.generator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.JavaElement;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.internal.DefaultCommentGenerator;
 
+import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -36,6 +38,9 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
         field.addJavaDocLine("/** " + introspectedColumn.getRemarks() + " */");
+
+        //swagger类
+        field.addJavaDocLine(" @ApiModelProperty(value = \"" + introspectedColumn.getRemarks() + "\" name = \"" + field.getName() + "\")");
     }
 
     @Override
@@ -47,10 +52,16 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
         topLevelClass.addJavaDocLine(" *");
         topLevelClass.addJavaDocLine(" * @author " + author);
         topLevelClass.addJavaDocLine(" */");
+
+        //swagger类
+        FullyQualifiedJavaType modelType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModel");
+        topLevelClass.addImportedType(modelType);
+        FullyQualifiedJavaType propertyType = new FullyQualifiedJavaType("io.swagger.annotations.ApiModelProperty;");
+        topLevelClass.addImportedType(propertyType);
         topLevelClass.addJavaDocLine("@ApiModel(description= \"" + introspectedTable.getRemarks() + "\")");
+
     }
 
     @Override
-    protected void addJavadocTag(JavaElement javaElement, boolean markAsDoNotDelete) {
-    }
+    protected void addJavadocTag(JavaElement javaElement, boolean markAsDoNotDelete) {}
 }
