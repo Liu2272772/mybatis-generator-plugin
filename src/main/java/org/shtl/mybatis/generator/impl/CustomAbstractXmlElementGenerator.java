@@ -9,13 +9,24 @@ import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.AbstractXmlElem
 
 public class CustomAbstractXmlElementGenerator extends AbstractXmlElementGenerator {
 
+    //方法名称
+    private static final String FIND_ONE = "finOne";
+    private static final String LIST = "list";
+    private static final String BATCH_INSERT = "batchInsert";
+
     @Override
     public void addElements(XmlElement parentElement) {
         //添加查询条件
         addQueryCondition(parentElement);
 
         //添加findOne方法
-        addFindOne(parentElement);
+        addFindOneOrListXml(parentElement, FIND_ONE);
+
+        //添加list的xml
+        addFindOneOrListXml(parentElement, LIST);
+
+        //批量添加
+        addBatchInsertXml(parentElement);
     }
 
     /**
@@ -55,10 +66,11 @@ public class CustomAbstractXmlElementGenerator extends AbstractXmlElementGenerat
     }
 
     /**
-     * 添加findOne方法
+     * 添加findOne 或 list方法
+     *
      * @param parentElement
      */
-    private void addFindOne(XmlElement parentElement) {
+    private void addFindOneOrListXml(XmlElement parentElement, String id) {
         StringBuilder sb = new StringBuilder();
         // 公用select
         sb.setLength(0);
@@ -75,11 +87,68 @@ public class CustomAbstractXmlElementGenerator extends AbstractXmlElementGenerat
 
         // 增加find
         XmlElement find = new XmlElement("select");
-        find.addAttribute(new Attribute("id", "find"));
+        find.addAttribute(new Attribute("id", id));
         find.addAttribute(new Attribute("resultMap", "BaseResultMap"));
-        find.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        if (introspectedTable.getRules().generateRecordWithBLOBsClass()) {
+            find.addAttribute(new Attribute("parameterType", introspectedTable.getRecordWithBLOBsType()));
+        } else {
+            find.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        }
+
         find.addElement(selectText);
         find.addElement(include);
         parentElement.addElement(find);
+    }
+
+    /**
+     * 添加批量添加
+     *
+     * @param parentElement XmlElement
+     */
+    private void addBatchInsertXml(XmlElement parentElement) {
+        //插入xml
+        XmlElement insertXml = new XmlElement("insert");
+        insertXml.addAttribute(new Attribute("id", BATCH_INSERT));
+        if (introspectedTable.getRules().generateRecordWithBLOBsClass()) {
+            insertXml.addAttribute(new Attribute("parameterType", introspectedTable.getRecordWithBLOBsType()));
+        } else {
+            insertXml.addAttribute(new Attribute("parameterType", introspectedTable.getBaseRecordType()));
+        }
+
+        //sql列名
+        StringBuilder sqlsb = new StringBuilder();
+        for(IntrospectedColumn introspectedColumn : introspectedTable.getAllColumns()) {
+            sqlsb.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
+            sqlsb.append(",");
+        }
+        sqlsb.deleteCharAt(sqlsb.length() - 1);
+
+        //值列
+        StringBuilder valsb = new StringBuilder();
+        valsb.append("(");
+        for(IntrospectedColumn introspectedColumn : introspectedTable.getAllColumns()) {
+            valsb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn,"item."));
+            valsb.append(",");
+        }
+        valsb.deleteCharAt(valsb.length() - 1);
+        valsb.append(")");
+
+        //循环xml
+        XmlElement forEachXml = new XmlElement("foreach");
+        forEachXml.addAttribute(new Attribute("collection", "recordList"));
+        forEachXml.addAttribute(new Attribute("item", "item"));
+        forEachXml.addAttribute(new Attribute("separator", ","));
+        forEachXml.addElement(new TextElement(valsb.toString()));
+
+        StringBuilder insert = new StringBuilder();
+        insert.append("insert into ");
+        insert.append(introspectedTable.getFullyQualifiedTableNameAtRuntime());
+        insert.append("(");
+        insert.append(sqlsb.toString());
+        insert.append(") values");
+
+        insertXml.addElement(new TextElement(insert.toString()));
+        insertXml.addElement(forEachXml);
+        parentElement.addElement(insertXml);
     }
 }
