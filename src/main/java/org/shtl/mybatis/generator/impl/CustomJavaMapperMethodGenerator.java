@@ -3,7 +3,6 @@ package org.shtl.mybatis.generator.impl;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.codegen.mybatis3.javamapper.elements.AbstractJavaMapperMethodGenerator;
 
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -60,7 +59,6 @@ public class CustomJavaMapperMethodGenerator extends AbstractJavaMapperMethodGen
         //添加参数
         method.addParameter(new Parameter(returnType, "record"));
 
-        addMapperAnnotations(anInterface, method);
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
         if (context.getPlugins().clientSelectByPrimaryKeyMethodGenerated(method, anInterface, introspectedTable)) {
             anInterface.addImportedTypes(importedTypes);
@@ -96,7 +94,6 @@ public class CustomJavaMapperMethodGenerator extends AbstractJavaMapperMethodGen
         method.setName(LIST);
         method.addParameter(new Parameter(parameterType, "record"));
 
-        addMapperAnnotations(anInterface, method);
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
         if (context.getPlugins().clientSelectByPrimaryKeyMethodGenerated(method, anInterface, introspectedTable)) {
             anInterface.addImportedTypes(importedTypes);
@@ -133,7 +130,6 @@ public class CustomJavaMapperMethodGenerator extends AbstractJavaMapperMethodGen
         parameterTypeList.addTypeArgument(parameterType);
         method.addParameter(new Parameter(parameterTypeList, "recordList", "@Param(\"recordList\")"));
 
-        addMapperAnnotations(anInterface, method);
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
         if (context.getPlugins().clientSelectByPrimaryKeyMethodGenerated(method, anInterface, introspectedTable)) {
             anInterface.addImportedTypes(importedTypes);
@@ -141,6 +137,4 @@ public class CustomJavaMapperMethodGenerator extends AbstractJavaMapperMethodGen
         }
     }
 
-    public void addMapperAnnotations(Interface interfaze, Method method) {
-    }
 }
