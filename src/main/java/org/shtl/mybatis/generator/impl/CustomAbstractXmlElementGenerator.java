@@ -11,7 +11,19 @@ public class CustomAbstractXmlElementGenerator extends AbstractXmlElementGenerat
 
     @Override
     public void addElements(XmlElement parentElement) {
-         // 增加base_query
+        //添加查询条件
+        addQueryCondition(parentElement);
+
+        //添加findOne方法
+        addFindOne(parentElement);
+    }
+
+    /**
+     * 添加查询条件
+     * @param parentElement
+     */
+    private void addQueryCondition(XmlElement parentElement) {
+        // 增加base_query
         XmlElement sql = new XmlElement("sql");
         sql.addAttribute(new Attribute("id", "base_query"));
 
@@ -40,7 +52,14 @@ public class CustomAbstractXmlElementGenerator extends AbstractXmlElementGenerat
         }
         sql.addElement(selectTrimElement);
         parentElement.addElement(sql);
+    }
 
+    /**
+     * 添加findOne方法
+     * @param parentElement
+     */
+    private void addFindOne(XmlElement parentElement) {
+        StringBuilder sb = new StringBuilder();
         // 公用select
         sb.setLength(0);
         sb.append("select ");

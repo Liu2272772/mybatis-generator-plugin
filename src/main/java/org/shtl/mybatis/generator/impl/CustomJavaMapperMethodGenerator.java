@@ -34,7 +34,13 @@ public class CustomJavaMapperMethodGenerator extends AbstractJavaMapperMethodGen
         //添加List包
         importedTypes.add(FullyQualifiedJavaType.getNewListInstance());
         //添加类型对象
-        FullyQualifiedJavaType returnType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+        FullyQualifiedJavaType returnType;
+        if (introspectedTable.getRules().generateRecordWithBLOBsClass()) {
+            returnType = new FullyQualifiedJavaType(introspectedTable.getRecordWithBLOBsType());
+        } else {
+            returnType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
+        }
+
         importedTypes.add(returnType);
 
         //方法对象
