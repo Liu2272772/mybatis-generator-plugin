@@ -11,6 +11,7 @@
         <plugin type="org.shtl.mybatis.generator.plugin.MySqlLimitPlugin"/>
         <plugin type="org.shtl.mybatis.generator.plugin.LombokPlugin"/>
         <plugin type="org.shtl.mybatis.generator.plugin.UnmergeableXmlMappersPlugin"/>
+        <plugin type="org.shtl.mybatis.generator.plugin.CustomPlugin"/>
 
         <!-- 注释生成器 -->
         <commentGenerator type="org.shtl.mybatis.generator.MyCommentGenerator">
